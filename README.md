@@ -1,0 +1,2 @@
+# lunchvote
+Trying out Haskell :/
