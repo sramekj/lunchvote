@@ -1,1 +1,9 @@
 <h1>Meal list
+<ul>
+    $forall menu <- menuList
+        <li>
+            <h3>#{restaurant menu}
+            <ul>
+                $forall Meal title price <- meals menu
+                    <li>#{title}   #{price} Kc
+            <button>I vote for #{restaurant menu}
