@@ -26,8 +26,8 @@ getRestaurantName index restaurantList = let restaurantItem = L.find (\k -> fst 
 
 getVoteData :: VoteRecords -> MenuList -> [VoteResult]
 getVoteData recordMap menuList = let restaurants = fmap (\k -> (Handler.ListMeals.id k, restaurant k)) menuList
-                                     sortedVotes = M.toDescList recordMap
-                                 in fmap (\k -> VoteResult{name = getRestaurantName (fst k) restaurants, votes = snd k}) sortedVotes
+                                     sortedVotes = reverse . L.sortBy (comparing snd) $ M.toList recordMap
+                                 in (\k -> VoteResult{name = getRestaurantName (fst k) restaurants, votes = snd k}) <$> sortedVotes
                                  
 
 getPoolR :: Handler Html
