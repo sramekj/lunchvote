@@ -1,22 +1,16 @@
 module Handler.Pool where
 
 import Import
-import Data.Map (Map)
 import qualified Data.Map as M
 import Data.List (sortBy)
 import qualified Data.List as L
 import Data.Ord (comparing)
-import Handler.ListMeals
+import Handler.Cache
 
 data VoteResult = VoteResult
                     { name :: Text,
                       votes :: Int
                     }
-
-type VoteRecords = Map Int Int
-
-getDummyVotes :: VoteRecords
-getDummyVotes = M.fromList [(0,5), (1,2), (2,7)]
 
 getRestaurantName :: Int -> [(Int,Text)] -> Text
 getRestaurantName index restaurantList = let restaurantItem = L.find (\k -> fst k == index) restaurantList
@@ -25,7 +19,7 @@ getRestaurantName index restaurantList = let restaurantItem = L.find (\k -> fst 
                                                 otherwise -> error "Invalid key"
 
 getVoteData :: VoteRecords -> MenuList -> [VoteResult]
-getVoteData recordMap menuList = let restaurants = fmap (\k -> (Handler.ListMeals.id k, restaurant k)) menuList
+getVoteData recordMap menuList = let restaurants = fmap (\k -> (Handler.Cache.id k, restaurant k)) menuList
                                      sortedVotes = reverse . L.sortBy (comparing snd) $ M.toList recordMap
                                  in (\k -> VoteResult{name = getRestaurantName (fst k) restaurants, votes = snd k}) <$> sortedVotes
                                  
@@ -33,5 +27,5 @@ getVoteData recordMap menuList = let restaurants = fmap (\k -> (Handler.ListMeal
 getPoolR :: Handler Html
 getPoolR = do
     defaultLayout $ do
-        let results = getVoteData getDummyVotes getDummyData
+        let results = getVoteData getVotes getData
         $(widgetFile "pool")
