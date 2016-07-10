@@ -24,6 +24,7 @@ library
                      Handler.Home
                      Handler.Comment
                      Handler.ListMeals
+                     Handler.Pool
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -103,6 +104,7 @@ test-suite test
                        Handler.CommonSpec
                        Handler.HomeSpec
                        Handler.ListMeals
+                       Handler.Pool
                        TestImport
     hs-source-dirs:    test
     ghc-options:       -Wall
