@@ -26,6 +26,7 @@ library
                      Handler.ListMeals
                      Handler.Pool
                      Handler.Cache
+                     Handler.Vote
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -106,6 +107,7 @@ test-suite test
                        Handler.HomeSpec
                        Handler.ListMeals
                        Handler.Pool
+                       Handler.Vote
                        TestImport
     hs-source-dirs:    test
     ghc-options:       -Wall
