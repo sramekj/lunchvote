@@ -2,5 +2,5 @@
 <ul>
     $forall voteresult <- results
         <li>
-            <h3>#{restaurant voteresult}
+            <h3>#{name voteresult}
             <h4>#{votes voteresult}

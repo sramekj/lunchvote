@@ -1,23 +1,32 @@
 module Handler.Pool where
 
 import Import
+import Data.Map (Map)
+import qualified Data.Map as M
 import Data.List (sortBy)
+import qualified Data.List as L
 import Data.Ord (comparing)
+import Handler.ListMeals
 
-data VoteRecord = VoteRecord 
-                    {
-                        id :: Int,
-                        restaurant :: Text,
-                        votes :: Int
+data VoteResult = VoteResult
+                    { name :: Text,
+                      votes :: Int
                     }
 
-type VoteRecords = [VoteRecord]
+type VoteRecords = Map Int Int
 
 getDummyVotes :: VoteRecords
-getDummyVotes = [VoteRecord{id = 1, restaurant = "PotrefenaHusa", votes = 5},VoteRecord{id = 2, restaurant = "Coolna", votes = 2},VoteRecord{id = 3, restaurant = "Harryho restaurant", votes = 7}]
+getDummyVotes = M.fromList [(0,5), (1,2), (2,7)]
+
+getVoteData :: VoteRecords -> MenuList -> [VoteResult]
+getVoteData recordMap menuList = 
+                        [VoteResult{name="hovno", votes=5}]
+    
+--reverse . L.sortBy (comparing snd) 
+            
 
 getPoolR :: Handler Html
 getPoolR = do
     defaultLayout $ do
-        let results = reverse . Data.List.sortBy (comparing votes) $ getDummyVotes
+        let results = getVoteData getDummyVotes ([]::MenuList)
         $(widgetFile "pool")
