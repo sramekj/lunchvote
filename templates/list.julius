@@ -1,6 +1,12 @@
 $(function(){
     $(".votebutton").click(function(event){
-        $.post("vote/"+event.target.id); 
-        document.location="pool/";
-        })
+        $.ajax({
+            url: "vote/"+event.target.id,
+            success: function() {
+                document.location="pool/";
+            },
+            type: "POST"
+        });
+
+     })
 });
