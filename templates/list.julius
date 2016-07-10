@@ -1,0 +1,6 @@
+$(function(){
+    $(".votebutton").click(function(event){
+        $.post("vote/"+event.target.id); 
+        document.location="pool/";
+        })
+});

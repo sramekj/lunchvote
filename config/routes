@@ -9,4 +9,4 @@
 /comments CommentR POST
 /list ListMealsR GET
 /pool PoolR GET
-/vote/#Int VoteR GET POST
+/vote/#Int VoteR POST

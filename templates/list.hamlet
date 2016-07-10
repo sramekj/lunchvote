@@ -6,4 +6,4 @@
             <ul>
                 $forall Meal title price <- meals menu
                     <li>#{title}   #{price} Kc
-            <button>I vote for #{restaurant menu}
+            <button class="votebutton" id="#{Handler.Cache.id menu}">I vote for #{restaurant menu}

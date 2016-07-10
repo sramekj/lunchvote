@@ -3,6 +3,7 @@ module Handler.Cache where
 import Import
 import Data.Map()
 import qualified Data.Map as M
+import qualified Control.Monad.State as S
    
 data Meal = Meal 
         { title :: Text,
@@ -21,6 +22,16 @@ type VoteRecords = Map Int Int
 
 getEmptyVotes :: MenuList -> VoteRecords
 getEmptyVotes rec = M.fromList $ (\k -> (Handler.Cache.id k,0)) <$> rec 
+
+updateCache :: Int -> VoteRecords -> VoteRecords
+updateCache = M.adjust (+1)
+
+updateState :: Int -> S.State VoteRecords VoteRecords 
+updateState i = do 
+          s <- S.get
+          S.put $ updateCache i s
+          return $ updateCache i s
+
 
 getVotes :: VoteRecords
 getVotes = getEmptyVotes getData 
