@@ -4,4 +4,10 @@ import Import
 import Handler.Cache
 
 postVoteR :: Int -> Handler Html
-postVoteR restaurantId = error "Not yet implemented: postVoteR"
+postVoteR restaurantId = do
+    redirect $ PoolR
+
+getVoteR :: Int -> Handler Html
+getVoteR restaurantId = do
+    defaultLayout [whamlet|<h1>#{restaurantId}|]
+
