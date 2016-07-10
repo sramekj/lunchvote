@@ -1,0 +1,6 @@
+<h1>Pool results
+<ul>
+    $forall voteresult <- results
+        <li>
+            <h3>#{restaurant voteresult}
+            <h4>#{votes voteresult}
