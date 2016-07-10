@@ -88,8 +88,6 @@ library
                  , time
                  , case-insensitive
                  , wai
-                 , mtl
-                 , http-types
 
 executable         lunchvote
     if flag(library-only)

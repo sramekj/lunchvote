@@ -53,13 +53,22 @@ readDb = runDB $ do
     dbData <- selectList[] [Desc PoolVotes]
     return $ (\(Entity _ d)  -> (poolRestaurantId d, poolVotes d, poolDate d)) <$> dbData
 
+validateDb = do
+    today <- lift $ liftIO getDateStr
+    invalidRecords <- runDB $ selectList [PoolDate !=. today] []
+    result <- case invalidRecords of
+                        [] -> readDb
+                        otherwise -> do initDb getData 
+                                        readDb
+    return result
+                        
 getPoolR :: Handler Html
 getPoolR = do
     dbData <- runDB $ selectList[] [Desc PoolVotes]
     validatedData <- case dbData of
                         [] -> do initDb getData 
                                  readDb
-                        otherwise -> readDb
+                        otherwise -> validateDb
     defaultLayout $ do
         let results = getVoteData (dbDataToVoteRecords validatedData) getData
         $(widgetFile "pool")
