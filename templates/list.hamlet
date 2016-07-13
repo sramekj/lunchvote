@@ -4,6 +4,7 @@
         <li>
             <h3>#{restaurant menu}
             <ul>
-                $forall Meal title price <- meals menu
-                    <li>#{title}   #{price} Kc
+                $forall Meal title mealPrice <- meals menu
+                    <li>#{title}   #{mealPrice}
             <button class="votebutton" id="#{Handler.Cache.id menu}">I vote for #{restaurant menu}
+<a href=@{PoolR}>See results

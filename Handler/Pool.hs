@@ -58,7 +58,8 @@ validateDb = do
     invalidRecords <- runDB $ selectList [PoolDate !=. today] []
     result <- case invalidRecords of
                         [] -> readDb
-                        otherwise -> do initDb getData 
+                        otherwise -> do rdata <- lift $ getData
+                                        initDb rdata
                                         readDb
     return result
                         
@@ -66,9 +67,11 @@ getPoolR :: Handler Html
 getPoolR = do
     dbData <- runDB $ selectList[] [Desc PoolVotes]
     validatedData <- case dbData of
-                        [] -> do initDb getData 
+                        [] -> do rdata <- lift $ getData
+                                 initDb rdata
                                  readDb
                         otherwise -> validateDb
     defaultLayout $ do
-        let results = getVoteData (dbDataToVoteRecords validatedData) getData
+        rdata <- lift $ getData
+        let results = getVoteData (dbDataToVoteRecords validatedData) rdata
         $(widgetFile "pool")

@@ -17,7 +17,17 @@ getIP = do
 getListMealsR :: Handler Html
 getListMealsR = do
     defaultLayout $ do
-        let menuList = getData 
+        menuList <- lift $ getData 
+        
+--        let keke = getData'
+--      ids <- liftIO getRestaurantIds
+----      print ids
+--        print <$> ids
+
+--        json <- getJSON resKey
+--        liftIO $ print json
+
+        
         clientIp <- getIP
         liftIO $ print ("Client IP: " ++ clientIp)
         $(widgetFile "list")

@@ -1,12 +1,58 @@
 module Handler.Cache where
 
 import Import
-import Data.Map()
-import qualified Data.Map as M
-   
+import Data.List.Split (splitOn)
+import Data.Aeson
+import qualified Data.ByteString.Lazy.Char8 as S
+import Network.HTTP.Simple
+import Prelude (read)
+
+data DailyMenus = DailyMenus
+                  { daily_menus :: [DailyMenu],
+                    status :: Text
+                  } deriving (Show)
+
+data DailyMenu = DailyMenu
+              { daily_menu_id :: Integer,
+                start_date :: Text,
+                end_date :: Text,
+                menu_name :: Text,
+                dishes :: [Dish]
+              } deriving (Show)
+
+data Dish = Dish
+            {  dish_id :: Integer,
+               dish_name :: Text,
+               price :: Text
+            } deriving (Show)
+
+instance FromJSON DailyMenus where
+    parseJSON (Object o) = 
+         DailyMenus <$> o .: "daily_menus"
+                    <*> o .: "status"
+    parseJSON _ = mzero
+
+instance FromJSON DailyMenu where
+    parseJSON (Object o) = 
+         DailyMenu <$> (e >>= (.: "daily_menu_id"))
+                   <*> (e >>= (.: "start_date"))
+                   <*> (e >>= (.: "end_date"))
+                   <*> (e >>= (.: "name"))
+                   <*> (e >>= (.: "dishes"))
+                   where e = o .: "daily_menu"
+    parseJSON _ = mzero
+
+instance FromJSON Dish where
+    parseJSON (Object o) = 
+         Dish <$> (e >>= (.: "dish_id"))
+              <*> (e >>= (.: "name"))
+              <*> (e >>= (.: "price"))
+              where e = o .: "dish"
+    parseJSON _ = mzero
+
 data Meal = Meal 
         { title :: Text,
-          price :: Double
+          mealPrice :: Text
         }
 
 data Menu = Menu
@@ -17,8 +63,62 @@ data Menu = Menu
 
 type MenuList = [Menu] 
 
+apiKey :: ByteString
+apiKey = "6a300d56ad8090e3aa3e469048dbdb78"
 
-getData :: MenuList
-getData = [Menu{id=0,restaurant="Potrefena husa",meals=[Meal{title="Rizek", price=101}, Meal{title="Kachna", price=128}]},Menu{id=1,restaurant="Coolna",meals=[Meal{title="Parek", price=40}, Meal{title="Sracka", price=150}]},Menu{id=2,restaurant="Harryho restaurant",meals=[Meal{title="Rizoto", price=80}, Meal{title="Smazak", price=99}]}]
+buildRequest :: String -> String
+buildRequest = (++) "GET https://developers.zomato.com/api/v2.1/dailymenu?res_id="
+
+resKey :: String
+resKey = "16507120"
+
+getData' :: MenuList
+getData' = [Menu{id=0,restaurant="Potrefena husa",meals=[Meal{title="Rizek", mealPrice="101 Kc"}, Meal{title="Kachna", mealPrice="128 Kc"}]},Menu{id=1,restaurant="Coolna",meals=[Meal{title="Parek", mealPrice="40 Kc"}, Meal{title="Sracka", mealPrice="150 Kc"}]},Menu{id=2,restaurant="Harryho restaurant",meals=[Meal{title="Rizoto", mealPrice="80 Kc"}, Meal{title="Smazak", mealPrice="99 Kc"}]}]
+
+data Restaurant = Restaurant Int Text
+                    deriving Show
+
+getRestaurantId :: Restaurant -> Int
+getRestaurantId (Restaurant id _) = id
+
+getRestaurantTitle :: Restaurant -> Text
+getRestaurantTitle (Restaurant _ title) = title
+
+parseRestaurant (a:b:[]) = Restaurant (read a :: Int) (pack b)
+parseRestaurant _ = error "Cannot parse list of restaurants"
+
+getRestaurants :: IO [Restaurant]
+getRestaurants = do
+    content <- readFile "./Handler/restaurants.dat" 
+    let datalines = lines content
+    return $ parseRestaurant . (splitOn "\t") <$>  datalines
+
+getJSON :: String -> IO (Maybe DailyMenus)
+getJSON rId = do
+    req' <- parseRequest $ buildRequest rId
+    let req = setRequestHeaders [("Accept", "application/json"), ("user_key", apiKey)] $ req'
+    response <- httpLBS req
+    let respBody = getResponseBody response :: S.ByteString
+    let json = decode respBody :: Maybe DailyMenus 
+    return json
+
+getData :: IO (MenuList)
+getData = do 
+    restaurants <- getRestaurants
+    forM restaurants processJSON
+    
+
+processJSON :: Restaurant -> IO (Menu)
+processJSON r = do
+                    json <- getJSON $ show $ getRestaurantId r
+                    case json of
+                         Nothing -> error "Failed to parse the menu JSON"
+                         Just j -> return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, meals = getMeals j}                     
+
+getMeals :: DailyMenus -> [Meal]
+getMeals menus = let firstMenu = (\(x:xs) -> x) $ daily_menus menus
+                     meals = dishes firstMenu
+                 in (\m -> Meal{title = dish_name m, mealPrice = price m}) <$> meals    
+
 
 
