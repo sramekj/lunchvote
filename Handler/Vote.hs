@@ -1,7 +1,6 @@
 module Handler.Vote where
 
 import Import
-import Handler.Cache
 import Handler.Pool
 
 postVoteR :: Int -> Handler Html

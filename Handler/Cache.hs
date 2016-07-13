@@ -63,18 +63,6 @@ data Menu = Menu
 
 type MenuList = [Menu] 
 
-apiKey :: ByteString
-apiKey = "6a300d56ad8090e3aa3e469048dbdb78"
-
-buildRequest :: String -> String
-buildRequest = (++) "GET https://developers.zomato.com/api/v2.1/dailymenu?res_id="
-
-resKey :: String
-resKey = "16507120"
-
-getData' :: MenuList
-getData' = [Menu{id=0,restaurant="Potrefena husa",meals=[Meal{title="Rizek", mealPrice="101 Kc"}, Meal{title="Kachna", mealPrice="128 Kc"}]},Menu{id=1,restaurant="Coolna",meals=[Meal{title="Parek", mealPrice="40 Kc"}, Meal{title="Sracka", mealPrice="150 Kc"}]},Menu{id=2,restaurant="Harryho restaurant",meals=[Meal{title="Rizoto", mealPrice="80 Kc"}, Meal{title="Smazak", mealPrice="99 Kc"}]}]
-
 data Restaurant = Restaurant Int Text
                     deriving Show
 
@@ -84,6 +72,7 @@ getRestaurantId (Restaurant id _) = id
 getRestaurantTitle :: Restaurant -> Text
 getRestaurantTitle (Restaurant _ title) = title
 
+parseRestaurant :: [String] -> Restaurant
 parseRestaurant (a:b:[]) = Restaurant (read a :: Int) (pack b)
 parseRestaurant _ = error "Cannot parse list of restaurants"
 
@@ -92,6 +81,12 @@ getRestaurants = do
     content <- readFile "./Handler/restaurants.dat" 
     let datalines = lines content
     return $ parseRestaurant . (splitOn "\t") <$>  datalines
+
+apiKey :: ByteString
+apiKey = "6a300d56ad8090e3aa3e469048dbdb78"
+
+buildRequest :: String -> String
+buildRequest = (++) "GET https://developers.zomato.com/api/v2.1/dailymenu?res_id="
 
 getJSON :: String -> IO (Maybe DailyMenus)
 getJSON rId = do
@@ -106,7 +101,6 @@ getData :: IO (MenuList)
 getData = do 
     restaurants <- getRestaurants
     forM restaurants processJSON
-    
 
 processJSON :: Restaurant -> IO (Menu)
 processJSON r = do
@@ -116,9 +110,7 @@ processJSON r = do
                          Just j -> return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, meals = getMeals j}                     
 
 getMeals :: DailyMenus -> [Meal]
-getMeals menus = let firstMenu = (\(x:xs) -> x) $ daily_menus menus
+getMeals menus = let firstMenu = (\(x:_) -> x) $ daily_menus menus
                      meals = dishes firstMenu
                  in (\m -> Meal{title = dish_name m, mealPrice = price m}) <$> meals    
-
-
 

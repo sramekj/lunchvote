@@ -6,8 +6,8 @@ import Data.List (sortBy)
 import qualified Data.List as L
 import Data.Ord (comparing)
 import Handler.Cache
-import Data.Time.Clock
-import Data.Time.Calendar
+import Data.Time.Clock()
+import Data.Time.Calendar()
 
 type VoteRecords = Map Int Int
 
@@ -59,7 +59,7 @@ validateDb = do
     result <- case invalidRecords of
                         [] -> readDb
                         otherwise -> do rdata <- lift $ getData
-                                        initDb rdata
+                                        _ <- initDb rdata
                                         readDb
     return result
                         
@@ -68,7 +68,7 @@ getPoolR = do
     dbData <- runDB $ selectList[] [Desc PoolVotes]
     validatedData <- case dbData of
                         [] -> do rdata <- lift $ getData
-                                 initDb rdata
+                                 _ <- initDb rdata
                                  readDb
                         otherwise -> validateDb
     defaultLayout $ do
