@@ -76,9 +76,9 @@ parseRestaurant :: [String] -> Restaurant
 parseRestaurant (a:b:[]) = Restaurant (read a :: Int) (pack b)
 parseRestaurant _ = error "Cannot parse list of restaurants"
 
-getRestaurants :: IO [Restaurant]
-getRestaurants = do
-    content <- readFile "./Handler/restaurants.dat" 
+getRestaurants :: String -> IO [Restaurant]
+getRestaurants path = do
+    content <- readFile path    
     let datalines = lines content
     return $ parseRestaurant . (splitOn "\t") <$>  datalines
 
@@ -99,8 +99,14 @@ getJSON rId = do
 
 getData :: IO (MenuList)
 getData = do 
-    restaurants <- getRestaurants
-    forM restaurants processJSON
+    restaurants <- getRestaurants "./Handler/restaurants.dat" 
+    adhocs <- getRestaurants "./Handler/adhoc.dat"
+    let jsonData = forM restaurants processJSON
+    let adhocData = forM adhocs processAdhoc
+    jsonData ++ adhocData
+
+processAdhoc :: Restaurant -> IO (Menu)
+processAdhoc r = return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, meals = []}
 
 processJSON :: Restaurant -> IO (Menu)
 processJSON r = do
