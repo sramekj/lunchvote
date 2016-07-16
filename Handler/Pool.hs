@@ -6,23 +6,10 @@ import Data.List (sortBy)
 import qualified Data.List as L
 import Data.Ord (comparing)
 import Handler.Cache
-import Data.Time.Clock()
-import Data.Time.Calendar()
+import Handler.Common
 
 type VoteRecords = Map Int Int
 
-getDate :: IO (Integer, Int, Int)
-getDate = getCurrentTime >>= return . toGregorian . utctDay
-
-printDate :: (Integer, Int, Int) -> Text
-printDate (year, month, day) =  
-          pack ((show year) ++ "-" ++ (show month) ++ "-" ++ (show day)) 
-
-getDateStr :: IO (Text)
-getDateStr = do
-    date <- getDate
-    let converted = printDate date
-    return converted
 
 data VoteResult = VoteResult
                     { name :: Text,
