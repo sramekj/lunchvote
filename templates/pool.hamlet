@@ -1,6 +1,10 @@
 <h1>Pool results
 <ul>
-    $forall voteresult <- results
-        <li>
-            <h3>#{name voteresult}
-            <h4>#{votes voteresult}
+    <table style="width:100%">
+        <tr>
+            <th> Restaurant
+            <th> Votes
+        $forall voteresult <- results
+            <tr>
+                <td>#{name voteresult} 
+                <td>#{votes voteresult}
