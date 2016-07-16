@@ -6,7 +6,6 @@
 
 / HomeR GET
 
-/comments CommentR POST
 /list ListMealsR GET
 /pool PoolR GET
 /vote/#Int VoteR POST
