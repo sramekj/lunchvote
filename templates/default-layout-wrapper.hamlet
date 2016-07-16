@@ -47,7 +47,14 @@ $newline never
       <header>
       <div id="main" role="main">
         ^{pageBody pc}
-      <footer>
+      <footer style="background-color:#eeeeee">
+        <table width="100%">
+            <tr>
+                <td>Code by: Jan Šrámek
+                <td>Contact information: 
+                    <a href="mailto:jan.sramek@ysoft.com">jan.sramek@ysoft.com
+                <td>Powered by:  
+                    <img width=30 height=30 src="https://wiki.haskell.org/wikiupload/4/4a/HaskellLogoStyPreview-1.png" alt="Haskell">  
 
     $maybe analytics <- appAnalytics $ appSettings master
       <script>

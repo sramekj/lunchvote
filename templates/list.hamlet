@@ -1,31 +1,21 @@
 <div .jumbotron .text-center>
     <h1>Lunch time
-    <p>Choose your favorite restaurant... be careful - you have only one vote per day.
-<a href=@{PoolR} class="menuitem">See results
-<div .container>
-    <ul>
-        $forall menu <- menuList
-            <li>
-                <div class="restaurant">
-                    <span class="restaurant-title">
-                        <h3>#{restaurant menu}
-                    <span class="restaurant-button">
-                        $if canVote
-                            <button class="votebutton" id="#{Handler.Cache.id menu}">#{restaurant menu}
-                        $else
-                            <button hidden disabled class="votebutton disabled" id="#{Handler.Cache.id menu}">You have already voted!
-                <ul>
-                    $forall Meal title mealPrice <- meals menu
-                        <li>
-                            <div class="meal">
-                                <span class="meal-title">#{title}   
-                                <span class="meal-price">#{mealPrice}
+    <p>Choose your favorite restaurant, but be careful... you have only one vote per day.
+<a href=@{PoolR} class="btn btn-primary btn-block" style="margin-bottom:10px">See results
+$forall menu <- menuList
+    <div .panel .panel-default>        
+        <div .panel-body>
+            <div class="restaurant">
+                <span class="restaurant-title">
+                    <h4 .text-primary style="display:inline-block">#{restaurant menu}                 
+                <span class="restaurant-button">
+                    $if canVote
+                        <button class="votebutton btn btn-success" id="#{Handler.Cache.id menu}" style="float:right;width:250px">#{restaurant menu}
+            <ul .list-group>
+                $forall Meal title mealPrice <- meals menu
+                    <li .list-group-item>
+                        <div class="meal">
+                            <span class="meal-title">#{title}   
+                            <span class="meal-price">#{mealPrice}
 
-<footer>
-    <table width="100%">
-        <tr>
-            <td>Code by: Jan Šrámek
-            <td>Contact information: 
-                <a href="mailto:jan.sramek@ysoft.com">jan.sramek@ysoft.com
-            <td>Powered by:  
-                <img width=30 height=30 src="https://wiki.haskell.org/wikiupload/4/4a/HaskellLogoStyPreview-1.png" alt="Haskell">
+

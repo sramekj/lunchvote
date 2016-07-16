@@ -1,22 +1,3 @@
 @import url("../css/bootstrap.css");
 
-h3 {
-    display: inline-block;
-}
-ul {
-    list-style-type: none;
-}
-
-.disabled {
-    color: #c0c0c0;
-    background-color: #ffffff;
-}
-
-.votebutton {
-    float: right;
-    width: 250px;
-    height: 30px;
-    text-overflow: ellipsis;
-}
-
 

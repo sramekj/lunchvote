@@ -1,3 +1,7 @@
 @import url("../css/bootstrap.css");
 
+.pool-results tr:first-child {
+    background-color:#dff0d8;
+}
+
 

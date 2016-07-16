@@ -1,10 +1,14 @@
-<h1>Pool results
+<div .jumbotron .text-center>
+    <h1>Pool results
 <ul>
-    <table style="width:100%">
-        <tr>
-            <th> Restaurant
-            <th> Votes
-        $forall voteresult <- results
+<div class="table-responsive">
+    <table .table>
+        <thead>
             <tr>
-                <td>#{name voteresult} 
-                <td>#{votes voteresult}
+                <th> Restaurant
+                <th> Votes
+        <tbody class="pool-results">
+            $forall voteresult <- results
+                <tr>
+                    <td>#{name voteresult} 
+                    <td>#{votes voteresult}
