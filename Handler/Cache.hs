@@ -7,6 +7,7 @@ import qualified Data.ByteString.Lazy.Char8 as S
 import Network.HTTP.Simple
 import Prelude (read)
 
+
 data DailyMenus = DailyMenus
                   { daily_menus :: [DailyMenu],
                     status :: Text
@@ -67,7 +68,7 @@ data Restaurant = Restaurant Int Text
                     deriving Show
 
 getRestaurantId :: Restaurant -> Int
-getRestaurantId (Restaurant id _) = id
+getRestaurantId (Restaurant rid _) = rid
 
 getRestaurantTitle :: Restaurant -> Text
 getRestaurantTitle (Restaurant _ title) = title
@@ -94,8 +95,8 @@ getJSON rId = do
     let req = setRequestHeaders [("Accept", "application/json"), ("user_key", apiKey)] $ req'
     response <- httpLBS req
     let respBody = getResponseBody response :: S.ByteString
-    let json = decode respBody :: Maybe DailyMenus 
-    return json
+    let result = decode respBody :: Maybe DailyMenus 
+    return result
 
 getData :: IO (MenuList)
 getData = do 
@@ -110,13 +111,18 @@ processAdhoc r = return Menu{id = getRestaurantId r, restaurant = getRestaurantT
 
 processJSON :: Restaurant -> IO (Menu)
 processJSON r = do
-                    json <- getJSON $ show $ getRestaurantId r
-                    case json of
-                         Nothing -> error "Failed to parse the menu JSON"
-                         Just j -> return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, meals = getMeals j}                     
+                    jsonData <- getJSON $ show $ getRestaurantId r
+                    case jsonData of
+                           Nothing -> error "Failed to parse the menu JSON"
+                           Just j -> return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, meals = getMeals j }                     
 
 getMeals :: DailyMenus -> [Meal]
-getMeals menus = let firstMenu = (\(x:_) -> x) $ daily_menus menus
-                     meals = dishes firstMenu
-                 in (\m -> Meal{title = dish_name m, mealPrice = price m}) <$> meals    
+getMeals menus = let firstMenu = safeHead $ daily_menus menus
+                     meals = case firstMenu of
+                                    Just m -> dishes m
+                                    Nothing -> []
+                 in (\m -> Meal{title = dish_name m, mealPrice = price m}) <$> meals  
 
+safeHead :: [a] -> Maybe a
+safeHead [] = Nothing
+safeHead (x:_) = Just x

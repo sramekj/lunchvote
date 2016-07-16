@@ -30,10 +30,10 @@ data VoteResult = VoteResult
                     }
 
 getRestaurantName :: Int -> [(Int,Text)] -> Text
-getRestaurantName index restaurantList = let restaurantItem = L.find (\k -> fst k == index) restaurantList
-                                         in case restaurantItem of
+getRestaurantName idx restaurantList = let restaurantItem = L.find (\k -> fst k == idx) restaurantList
+                                       in case restaurantItem of
                                                 Just (_, x) -> x
-                                                otherwise -> error "Invalid key"
+                                                _ -> error "Invalid key"
 
 getVoteData :: VoteRecords -> MenuList -> [VoteResult]
 getVoteData recordMap menuList = let restaurants = fmap (\k -> (Handler.Cache.id k, restaurant k)) menuList
@@ -58,9 +58,9 @@ validateDb = do
     invalidRecords <- runDB $ selectList [PoolDate !=. today] []
     result <- case invalidRecords of
                         [] -> readDb
-                        otherwise -> do rdata <- lift $ getData
-                                        _ <- initDb rdata
-                                        readDb
+                        _ -> do rdata <- lift $ getData
+                                _ <- initDb rdata
+                                readDb
     return result
                         
 getPoolR :: Handler Html
@@ -70,7 +70,7 @@ getPoolR = do
                         [] -> do rdata <- lift $ getData
                                  _ <- initDb rdata
                                  readDb
-                        otherwise -> validateDb
+                        _ -> validateDb
     defaultLayout $ do
         rdata <- lift $ getData
         let results = getVoteData (dbDataToVoteRecords validatedData) rdata
