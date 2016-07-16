@@ -32,11 +32,12 @@ insertVoterIp = do
 
 getListMealsR :: Handler Html
 getListMealsR = do
-     menuList <- lift $ getData 
+    menuList <- lift $ getData 
+    canVote <- validateVoterIp
+--  if canVote then insertVoterIp
+--             else $(logInfo) "User cannot vote"
 
---   canVote <- validateVoterIp
---   if canVote then insertVoterIp
---              else $(logInfo) "User cannot vote"
+    
 
 
   --   case lift $ canVote of True -> return ()
@@ -53,6 +54,6 @@ getListMealsR = do
         
 --     clientIp <- getIP
 --     liftIO $ print ("Client IP: " ++ clientIp)
-     defaultLayout $ do
+    defaultLayout $ do
         $(widgetFile "list")
 

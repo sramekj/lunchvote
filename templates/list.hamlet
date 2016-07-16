@@ -6,5 +6,9 @@
             <ul>
                 $forall Meal title mealPrice <- meals menu
                     <li>#{title}   #{mealPrice}
-            <button class="votebutton" id="#{Handler.Cache.id menu}">I vote for #{restaurant menu}
+            $if canVote
+                <button class="votebutton" id="#{Handler.Cache.id menu}">I vote for #{restaurant menu}
+            $else
+                <button disabled class="votebutton disabled" id="#{Handler.Cache.id menu}">You have already voted!!!
+
 <a href=@{PoolR}>See results
