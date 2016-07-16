@@ -31,34 +31,41 @@ dbDataToVoteRecords :: [(Int, Int, Text)] -> VoteRecords
 dbDataToVoteRecords = M.fromList . fmap (\(a, b, _) -> (a, b))
 
 initDb rList = runDB $ do
-        deleteWhere ([] :: [Filter Pool])
-        forM rList $ \k -> do
-            currentDate <- lift $ liftIO getDateStr
+        currentDate <- lift $ liftIO getDateStr
+        deleteWhere [PoolDate ==. currentDate]
+        _ <- forM rList $ \k -> do
             insert $ Pool (Handler.Cache.id k)  0 currentDate
+        return ()
 
 readDb = runDB $ do
-    dbData <- selectList[] [Desc PoolVotes]
+    currentDate <- lift $ liftIO getDateStr
+    dbData <- selectList[PoolDate ==. currentDate] [Desc PoolVotes]
     return $ (\(Entity _ d)  -> (poolRestaurantId d, poolVotes d, poolDate d)) <$> dbData
 
-validateDb = do
-    today <- lift $ liftIO getDateStr
-    invalidRecords <- runDB $ selectList [PoolDate !=. today] []
-    result <- case invalidRecords of
-                        [] -> readDb
-                        _ -> do rdata <- lift $ getData
-                                _ <- initDb rdata
-                                readDb
+validatedReadDb = do
+    currentDate <- lift $ liftIO getDateStr
+    currentDateRecords <- runDB $ selectList [PoolDate ==. currentDate] []
+    result <- case currentDateRecords of
+                        [] -> do rdata <- lift $ getData
+                                 initDb rdata
+                                 readDb
+                        records -> return $ (\(Entity _ d)  -> (poolRestaurantId d, poolVotes d, poolDate d)) <$> records 
     return result
-                        
+
+prepareDb = do
+    currentDate <- lift $ liftIO getDateStr
+    currentDateRecords <- runDB $ selectList [PoolDate ==. currentDate] []
+    result <- case currentDateRecords of
+                        [] -> do rdata <- lift $ getData
+                                 initDb rdata
+                        _ -> return ()     
+    return result
+
+
 getPoolR :: Handler Html
 getPoolR = do
-    dbData <- runDB $ selectList[] [Desc PoolVotes]
-    validatedData <- case dbData of
-                        [] -> do rdata <- lift $ getData
-                                 _ <- initDb rdata
-                                 readDb
-                        _ -> validateDb
+    dbData <- validatedReadDb
     defaultLayout $ do
         rdata <- lift $ getData
-        let results = getVoteData (dbDataToVoteRecords validatedData) rdata
+        let results = getVoteData (dbDataToVoteRecords dbData) rdata
         $(widgetFile "pool")

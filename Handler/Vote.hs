@@ -6,8 +6,7 @@ import Handler.Pool
 
 postVoteR :: Int -> Handler Html
 postVoteR restaurantId = do
-    _ <- validateDb
-
+    prepareDb
     canVote <- validateVoterIp
     case canVote of 
             True -> do
