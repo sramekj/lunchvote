@@ -30,41 +30,32 @@ getVoteData recordMap menuList = let restaurants = fmap (\k -> (Handler.Cache.id
 dbDataToVoteRecords :: [(Int, Int, Text)] -> VoteRecords
 dbDataToVoteRecords = M.fromList . fmap (\(a, b, _) -> (a, b))
 
-initDb rList = runDB $ do
-        currentDate <- lift $ liftIO getDateStr
-        deleteWhere [PoolDate ==. currentDate]
-        _ <- forM rList $ \k -> do
-            insert $ Pool (Handler.Cache.id k)  0 currentDate
-        return ()
+initDb = runDB $ do
+    rdata <- liftIO $ getData
+    currentDate <- lift $ liftIO getDateStr
+    deleteWhere [PoolDate ==. currentDate]
+    _ <- forM rdata $ \k -> do
+        insert $ Pool (Handler.Cache.id k)  0 currentDate
+    return ()
 
 readDb = runDB $ do
     currentDate <- lift $ liftIO getDateStr
     dbData <- selectList[PoolDate ==. currentDate] [Desc PoolVotes]
     return $ (\(Entity _ d)  -> (poolRestaurantId d, poolVotes d, poolDate d)) <$> dbData
 
-validatedReadDb = do
-    currentDate <- lift $ liftIO getDateStr
-    currentDateRecords <- runDB $ selectList [PoolDate ==. currentDate] []
-    result <- case currentDateRecords of
-                        [] -> do rdata <- lift $ getData
-                                 initDb rdata
-                                 readDb
-                        records -> return $ (\(Entity _ d)  -> (poolRestaurantId d, poolVotes d, poolDate d)) <$> records 
-    return result
-
 prepareDb = do
     currentDate <- lift $ liftIO getDateStr
     currentDateRecords <- runDB $ selectList [PoolDate ==. currentDate] []
     result <- case currentDateRecords of
-                        [] -> do rdata <- lift $ getData
-                                 initDb rdata
+                        [] -> do initDb
                         _ -> return ()     
     return result
 
 
 getPoolR :: Handler Html
 getPoolR = do
-    dbData <- validatedReadDb
+    prepareDb
+    dbData <- readDb
     defaultLayout $ do
         rdata <- lift $ getData
         let results = getVoteData (dbDataToVoteRecords dbData) rdata
