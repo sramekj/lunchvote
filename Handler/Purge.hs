@@ -13,7 +13,7 @@ compareIp myIp = do
 
 getPurgeR :: Handler Html
 getPurgeR = do
-    approval <- compareIp "127.0.0.1"
+    approval <- compareIp "10.1.2.237"
     case approval of 
             True -> do
                 purge
