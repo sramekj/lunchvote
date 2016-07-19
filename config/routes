@@ -7,6 +7,6 @@
 / HomeR GET
 
 /list ListMealsR GET
-/pool PoolR GET
+/poll PollR GET
 /vote/#Int VoteR POST
 /purge PurgeR GET

@@ -35,7 +35,7 @@ import System.Log.FastLogger                (defaultBufSize, newStdoutLoggerSet,
 import Handler.Common
 import Handler.Home
 import Handler.ListMeals
-import Handler.Pool
+import Handler.Poll
 import Handler.Vote
 import Handler.Purge
 

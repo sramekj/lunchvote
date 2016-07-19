@@ -8,7 +8,7 @@ Email
     userId UserId Maybe
     verkey Text Maybe
     UniqueEmail email
-Pool
+Poll
     restaurantId Int
     votes Int
     date Text

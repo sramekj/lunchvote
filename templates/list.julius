@@ -3,7 +3,7 @@ $(function(){
         $.ajax({
             url: "vote/"+event.target.id,
             success: function() {
-                document.location="pool/";
+                document.location="poll/";
             },
             type: "POST"
         });

@@ -2,7 +2,7 @@ module Handler.Vote where
 
 import Import
 import Handler.Common
-import Handler.Pool
+import Handler.Poll
 
 postVoteR :: Int -> Handler Html
 postVoteR restaurantId = do
@@ -10,7 +10,7 @@ postVoteR restaurantId = do
     canVote <- validateVoterIp
     case canVote of 
             True -> do
-                runDB $ updateWhere [PoolRestaurantId ==. restaurantId] [PoolVotes +=. 1]
+                runDB $ updateWhere [PollRestaurantId ==. restaurantId] [PollVotes +=. 1]
                 insertVoterIp
             False -> return ()
     defaultLayout [whamlet||]

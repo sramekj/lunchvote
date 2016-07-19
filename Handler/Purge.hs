@@ -4,7 +4,7 @@ import Import
 import Handler.Common
 
 purge = runDB $ do
-    deleteWhere ([] :: [Filter Pool])
+    deleteWhere ([] :: [Filter Poll])
     deleteWhere ([] :: [Filter Votes])
  
 compareIp myIp = do

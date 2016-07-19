@@ -23,7 +23,7 @@ library
                      Handler.Common
                      Handler.Home
                      Handler.ListMeals
-                     Handler.Pool
+                     Handler.Poll
                      Handler.Cache
                      Handler.Vote
                      Handler.Purge
@@ -107,7 +107,7 @@ test-suite test
                        Handler.CommonSpec
                        Handler.HomeSpec
                        Handler.ListMeals
-                       Handler.Pool
+                       Handler.Poll
                        Handler.Vote
                        Handler.Purge
                        TestImport

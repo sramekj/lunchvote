@@ -1,5 +1,5 @@
 <div .jumbotron .text-center>
-    <h1>Pool results
+    <h1>Poll results
 <ul>
 <div class="table-responsive">
     <table .table>
@@ -7,7 +7,7 @@
             <tr>
                 <th> Restaurant
                 <th> Votes
-        <tbody class="pool-results">
+        <tbody class="poll-results">
             $forall voteresult <- results
                 <tr>
                     <td>#{name voteresult} 

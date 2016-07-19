@@ -1,7 +1,7 @@
 <div .jumbotron .text-center>
     <h1>Lunch time
     <p>Choose your favorite restaurant, but be careful... you have only one vote per day.
-<a href=@{PoolR} class="btn btn-primary btn-block" style="margin-bottom:10px">See results
+<a href=@{PollR} class="btn btn-primary btn-block" style="margin-bottom:10px">See results
 $forall menu <- menuList
     <div .panel .panel-default>        
         <div .panel-body>

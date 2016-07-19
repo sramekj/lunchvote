@@ -1,4 +1,4 @@
-module Handler.Pool where
+module Handler.Poll where
 
 import Import
 import qualified Data.Map as M
@@ -33,30 +33,30 @@ dbDataToVoteRecords = M.fromList . fmap (\(a, b, _) -> (a, b))
 initDb = runDB $ do
     rdata <- liftIO $ getData
     currentDate <- lift $ liftIO getDateStr
-    deleteWhere [PoolDate ==. currentDate]
+    deleteWhere [PollDate ==. currentDate]
     _ <- forM rdata $ \k -> do
-        insert $ Pool (Handler.Cache.id k)  0 currentDate
+        insert $ Poll (Handler.Cache.id k)  0 currentDate
     return ()
 
 readDb = runDB $ do
     currentDate <- lift $ liftIO getDateStr
-    dbData <- selectList[PoolDate ==. currentDate] [Desc PoolVotes]
-    return $ (\(Entity _ d)  -> (poolRestaurantId d, poolVotes d, poolDate d)) <$> dbData
+    dbData <- selectList[PollDate ==. currentDate] [Desc PollVotes]
+    return $ (\(Entity _ d)  -> (pollRestaurantId d, pollVotes d, pollDate d)) <$> dbData
 
 prepareDb = do
     currentDate <- lift $ liftIO getDateStr
-    currentDateRecords <- runDB $ selectList [PoolDate ==. currentDate] []
+    currentDateRecords <- runDB $ selectList [PollDate ==. currentDate] []
     result <- case currentDateRecords of
                         [] -> do initDb
                         _ -> return ()     
     return result
 
 
-getPoolR :: Handler Html
-getPoolR = do
+getPollR :: Handler Html
+getPollR = do
     prepareDb
     dbData <- readDb
     defaultLayout $ do
         rdata <- lift $ getData
         let results = getVoteData (dbDataToVoteRecords dbData) rdata
-        $(widgetFile "pool")
+        $(widgetFile "poll")
