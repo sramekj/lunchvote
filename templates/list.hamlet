@@ -7,7 +7,11 @@ $forall menu <- menuList
         <div .panel-body>
             <div class="restaurant">
                 <span class="restaurant-title">
-                    <h4 .text-primary style="display:inline-block">#{restaurant menu}                 
+                    $maybe link <- link menu
+                        <h4 .text-primary style="display:inline-block">
+                            <a href="#{link}" target="_blank">#{restaurant menu}
+                    $nothing
+                        <h4 .text-primary style="display:inline-block">#{restaurant menu}                 
                 <span class="restaurant-button">
                     $if canVote
                         <button class="votebutton btn btn-success" id="#{Handler.Cache.id menu}" style="float:right;width:250px">#{restaurant menu}

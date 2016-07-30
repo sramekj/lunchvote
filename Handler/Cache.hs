@@ -59,22 +59,27 @@ data Meal = Meal
 data Menu = Menu
         { id :: Int,
           restaurant :: Text,
+          link :: Maybe Text,
           meals :: [Meal]
         }
 
 type MenuList = [Menu] 
 
-data Restaurant = Restaurant Int Text
+data Restaurant = Restaurant Int Text (Maybe Text)
                     deriving Show
 
 getRestaurantId :: Restaurant -> Int
-getRestaurantId (Restaurant rid _) = rid
+getRestaurantId (Restaurant rid _ _) = rid
 
 getRestaurantTitle :: Restaurant -> Text
-getRestaurantTitle (Restaurant _ title) = title
+getRestaurantTitle (Restaurant _ title _) = title
+
+getRestaurantLink :: Restaurant -> Maybe(Text)
+getRestaurantLink (Restaurant _ _ link) = link
 
 parseRestaurant :: [String] -> Restaurant
-parseRestaurant (a:b:[]) = Restaurant (read a :: Int) (pack b)
+parseRestaurant (a:b:[]) = Restaurant (read a :: Int) (pack b) Nothing
+parseRestaurant (a:b:c:[]) = Restaurant (read a :: Int) (pack b) (Just $ pack c)
 parseRestaurant _ = error "Cannot parse list of restaurants"
 
 getRestaurants :: String -> IO [Restaurant]
@@ -107,14 +112,14 @@ getData = do
     jsonData ++ adhocData
 
 processAdhoc :: Restaurant -> IO (Menu)
-processAdhoc r = return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, meals = []}
+processAdhoc r = return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, link = getRestaurantLink r, meals = []}
 
 processJSON :: Restaurant -> IO (Menu)
 processJSON r = do
                     jsonData <- getJSON $ show $ getRestaurantId r
                     case jsonData of
                            Nothing -> error "Failed to parse the menu JSON"
-                           Just j -> return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, meals = getMeals j }                     
+                           Just j -> return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, link = getRestaurantLink r, meals = getMeals j }                     
 
 getMeals :: DailyMenus -> [Meal]
 getMeals menus = let firstMenu = safeHead $ daily_menus menus
