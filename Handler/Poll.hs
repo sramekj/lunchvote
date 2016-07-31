@@ -13,7 +13,8 @@ type VoteRecords = Map Int Int
 
 data VoteResult = VoteResult
                     { name :: Text,
-                      votes :: Int
+                      votes :: Int,
+                      id :: Int
                     }
 
 getRestaurantName :: Int -> [(Int,Text)] -> Text
@@ -25,7 +26,7 @@ getRestaurantName idx restaurantList = let restaurantItem = L.find (\k -> fst k 
 getVoteData :: VoteRecords -> MenuList -> [VoteResult]
 getVoteData recordMap menuList = let restaurants = fmap (\k -> (Handler.Cache.id k, restaurant k)) menuList
                                      sortedVotes = reverse . L.sortBy (comparing snd) $ M.toList recordMap
-                                 in (\k -> VoteResult{name = getRestaurantName (fst k) restaurants, votes = snd k}) <$> sortedVotes
+                                 in (\k -> VoteResult{name = getRestaurantName (fst k) restaurants, votes = snd k, id = fst k}) <$> sortedVotes
                                  
 dbDataToVoteRecords :: [(Int, Int, Text)] -> VoteRecords
 dbDataToVoteRecords = M.fromList . fmap (\(a, b, _) -> (a, b))

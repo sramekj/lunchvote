@@ -10,5 +10,6 @@
         <tbody class="poll-results">
             $forall voteresult <- results
                 <tr>
-                    <td>#{name voteresult} 
+                    <td>
+                        <a href="list##{Handler.Poll.id voteresult}" style="display:block;">#{name voteresult}
                     <td>#{votes voteresult}
