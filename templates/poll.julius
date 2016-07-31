@@ -2,20 +2,24 @@ $(document).ready(function() {
     var $table = $("#resulttable");
     $table.find("th").each(function()
     {
-        var oldValue=0, currentValue=0, $elementToMark;
+        var currentValue=0, maxValue=0;
         var $trs = $table.find("tr");
         $trs.each(function(index, element) {
             $(this).find("td:eq(1)").each(function() {
-                if(currentValue>oldValue)
-                    oldValue = currentValue;
                 currentValue = parseFloat($(this).html());
-                if(currentValue > oldValue) {
-                    $elementToMark = $(this).closest("tr");
-                }
-                if(index == $trs.length-1) {
-                    $elementToMark.addClass("highest"); 
+                if(currentValue > maxValue) {
+                    maxValue = currentValue
                 }
             });
         });
-    });
+        $trs.each(function(index, element) {
+            var rowToMark = $(this)
+            $(this).find("td:eq(1)").each(function() {
+                var val = parseFloat($(this).html());
+                if(val == maxValue) {
+                    rowToMark.addClass("highest"); 
+                }
+            });          
+        });
+     });
 });
