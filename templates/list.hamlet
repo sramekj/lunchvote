@@ -5,7 +5,7 @@
 $forall menu <- menuList
     <div .panel .panel-default>        
         <div .panel-body>
-            <div class="restaurant">
+            <div class="restaurant" id="r#{Handler.Cache.id menu}">
                 <span class="restaurant-title">
                     $maybe link <- link menu
                         <h4 .text-primary style="display:inline-block">
