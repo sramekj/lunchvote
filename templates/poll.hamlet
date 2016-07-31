@@ -2,7 +2,7 @@
     <h1>Poll results
 <ul>
 <div class="table-responsive">
-    <table .table>
+    <table id="resulttable" .table>
         <thead>
             <tr>
                 <th> Restaurant

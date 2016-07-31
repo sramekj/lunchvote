@@ -1,0 +1,21 @@
+$(document).ready(function() {
+    var $table = $("#resulttable");
+    $table.find("th").each(function()
+    {
+        var oldValue=0, currentValue=0, $elementToMark;
+        var $trs = $table.find("tr");
+        $trs.each(function(index, element) {
+            $(this).find("td:eq(1)").each(function() {
+                if(currentValue>oldValue)
+                    oldValue = currentValue;
+                currentValue = parseFloat($(this).html());
+                if(currentValue > oldValue) {
+                    $elementToMark = $(this).closest("tr");
+                }
+                if(index == $trs.length-1) {
+                    $elementToMark.addClass("highest"); 
+                }
+            });
+        });
+    });
+});
