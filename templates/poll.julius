@@ -16,7 +16,7 @@ $(document).ready(function() {
             var rowToMark = $(this)
             $(this).find("td:eq(1)").each(function() {
                 var val = parseFloat($(this).html());
-                if(val == maxValue) {
+                if((val == maxValue) && (maxValue > 0)) {
                     rowToMark.addClass("highest"); 
                 }
             });          
