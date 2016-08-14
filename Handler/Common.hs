@@ -5,6 +5,7 @@ import Data.FileEmbed (embedFile)
 import Import
 import Data.Time.Clock()
 import Data.Time.Calendar()
+import Network.Wai
 import qualified Data.Foldable as F
 
 -- These handlers embed files in the executable at compile time to avoid a
@@ -44,6 +45,10 @@ getIP = do
                                       Just ip -> return ip
                                       Nothing -> error "Cannot get client IP"
 
+getIP2 = do
+    ip <- fmap (show . remoteHost . reqWaiRequest) getRequest
+    return $ pack $ takeWhile (/=':') ip
+ 
 validateVoterIp = do
     today <- liftIO $ getDateStr
     ip <- getIP
