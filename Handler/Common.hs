@@ -51,12 +51,12 @@ getIP2 = do
  
 validateVoterIp = do
     today <- liftIO $ getDateStr
-    ip <- getIP
+    ip <- getIP2
     invalidRecords <- runDB $ selectList [VotesDate ==. today, VotesIp ==. ip] []
     return $ isEmpty $ invalidRecords
  
 insertVoterIp = do
-    ip <- getIP
+    ip <- getIP2
     today <- lift $ liftIO getDateStr
     let record = Votes ip today
     _ <- runDB $ upsert record [VotesDate =. today]

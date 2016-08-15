@@ -6,8 +6,8 @@ import Handler.Cache
 
 getListMealsR :: Handler Html
 getListMealsR = do
-    --ip <- getIP2 
-    --putStrLn $ pack "Client list request from IP: " ++ ip
+    -- ip <- getIP2 
+    -- putStrLn $ pack "Client list request from IP: " ++ ip
     menuList <- lift $ getData 
     canVote <- validateVoterIp
     defaultLayout $ do

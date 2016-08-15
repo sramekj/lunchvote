@@ -14,7 +14,7 @@ Poll
     date Text
     deriving Show
 Votes
-    ip ByteString
+    ip Text
     UniqueIp ip
     date Text
 

@@ -6,14 +6,15 @@ import Handler.Common
 purge = runDB $ do
     deleteWhere ([] :: [Filter Poll])
     deleteWhere ([] :: [Filter Votes])
- 
+
+compareIp :: Text -> HandlerT App IO Bool 
 compareIp myIp = do
-    ip <- getIP
+    ip <- getIP2
     return $ ip == myIp
 
 getPurgeR :: Handler Html
 getPurgeR = do
-    approval <- compareIp "10.1.2.237"
+    approval <- compareIp $ pack "10.1.2.237"
     case approval of 
             True -> do
                 purge
