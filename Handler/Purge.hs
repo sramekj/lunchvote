@@ -9,7 +9,7 @@ purge = runDB $ do
 
 compareIp :: Text -> HandlerT App IO Bool 
 compareIp myIp = do
-    ip <- getIP2
+    ip <- getIp
     return $ ip == myIp
 
 getPurgeR :: Handler Html

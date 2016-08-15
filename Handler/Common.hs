@@ -36,7 +36,7 @@ getDateStr = do
     let converted = printDate date
     return converted
 
-getIP = do
+getIpFromHeader = do
     ip1 <- lookupHeader "X-Real-IP"
     ip2 <- lookupHeader "X-Forwarded-For" 
     case ip1 of 
@@ -45,18 +45,18 @@ getIP = do
                                       Just ip -> return ip
                                       Nothing -> error "Cannot get client IP"
 
-getIP2 = do
+getIp = do
     ip <- fmap (show . remoteHost . reqWaiRequest) getRequest
     return $ pack $ takeWhile (/=':') ip
  
 validateVoterIp = do
     today <- liftIO $ getDateStr
-    ip <- getIP2
+    ip <- getIp
     invalidRecords <- runDB $ selectList [VotesDate ==. today, VotesIp ==. ip] []
     return $ isEmpty $ invalidRecords
  
 insertVoterIp = do
-    ip <- getIP2
+    ip <- getIp
     today <- lift $ liftIO getDateStr
     let record = Votes ip today
     _ <- runDB $ upsert record [VotesDate =. today]
