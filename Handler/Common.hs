@@ -49,16 +49,15 @@ getIp = do
     ip <- fmap (show . remoteHost . reqWaiRequest) getRequest
     return $ pack $ takeWhile (/=':') ip
  
-validateVoterIp = do
+validateVoterIp rId = do
     today <- liftIO $ getDateStr
     ip <- getIp
-    invalidRecords <- runDB $ selectList [VotesDate ==. today, VotesIp ==. ip] []
+    invalidRecords <- runDB $ selectList [VotesDate ==. today, VotesIp ==. ip, VotesRId ==. rId] []
     return $ isEmpty $ invalidRecords
  
-insertVoterIp = do
+insertVoterIp rId = do
     ip <- getIp
     today <- lift $ liftIO getDateStr
-    let record = Votes ip today
-    _ <- runDB $ upsert record [VotesDate =. today]
+    let record = Votes ip rId today
+    _ <- runDB $ insert record
     return ()
-

@@ -1,6 +1,6 @@
 <div .jumbotron .text-center>
     <h1>Lunch time
-    <p>Choose your favorite restaurant, but be careful... you have only one vote per day.
+    <p>Choose your favorite restaurant
 <a href=@{PollR} class="btn btn-primary btn-block" style="margin-bottom:10px">See results
 $forall menu <- menuList
     <div .panel .panel-default>        
@@ -13,8 +13,9 @@ $forall menu <- menuList
                     $nothing
                         <h4 .text-primary style="display:inline-block">#{restaurant menu}                 
                 <span class="restaurant-button">
-                    $if canVote
-                        <button class="votebutton btn btn-success" id="#{Handler.Cache.id menu}" style="float:right;width:250px">#{restaurant menu}
+                $if (elem (Handler.Cache.id menu) canVoteIdList) 
+                    <button class="votebutton btn btn-default lg" id="#{Handler.Cache.id menu}" style="float:right">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"> Vote
             <ul .list-group>
                 $forall Meal title mealPrice <- meals menu
                     <li .list-group-item>
