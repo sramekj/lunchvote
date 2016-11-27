@@ -3,10 +3,9 @@ $(function(){
         $.ajax({
             url: "vote/"+event.target.id,
             success: function() {
-                document.location="poll/";
-            },
+                $("#" + event.target.id).hide();
+             },
             type: "POST"
         });
-
-     })
+    })
 });

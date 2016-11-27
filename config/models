@@ -15,7 +15,7 @@ Poll
     deriving Show
 Votes
     ip Text
-    UniqueIp ip
+    rId Int
     date Text
 
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)

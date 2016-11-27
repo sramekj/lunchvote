@@ -7,10 +7,10 @@ import Handler.Poll
 postVoteR :: Int -> Handler Html
 postVoteR restaurantId = do
     prepareDb
-    canVote <- validateVoterIp
+    canVote <- validateVoterIp restaurantId
     case canVote of 
             True -> do
                 runDB $ updateWhere [PollRestaurantId ==. restaurantId] [PollVotes +=. 1]
-                insertVoterIp
+                insertVoterIp restaurantId
             False -> return ()
     defaultLayout [whamlet||]
