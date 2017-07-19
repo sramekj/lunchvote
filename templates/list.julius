@@ -1,9 +1,10 @@
 $(function(){
     $(".votebutton").click(function(event){
+	var id = event.currentTarget.id;
         $.ajax({
-            url: "vote/"+event.target.id,
+            url: "vote/" + id,
             success: function() {
-                $("#" + event.target.id).hide();
+                $("#" + id).hide();
              },
             type: "POST"
         });
