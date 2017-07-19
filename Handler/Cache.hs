@@ -3,7 +3,7 @@ module Handler.Cache where
 import Import
 import Data.List.Split (splitOn)
 import Data.Aeson
-import qualified Data.ByteString.Lazy.Char8 as S
+import qualified Data.ByteString.Lazy.UTF8 as S
 import Network.HTTP.Simple
 import Prelude (read)
 
@@ -14,7 +14,7 @@ data DailyMenus = DailyMenus
                   } deriving (Show)
 
 data DailyMenu = DailyMenu
-              { daily_menu_id :: Integer,
+              { daily_menu_id :: Text,
                 start_date :: Text,
                 end_date :: Text,
                 menu_name :: Text,
@@ -22,7 +22,7 @@ data DailyMenu = DailyMenu
               } deriving (Show)
 
 data Dish = Dish
-            {  dish_id :: Integer,
+            {  dish_id :: Text,
                dish_name :: Text,
                price :: Text
             } deriving (Show)
@@ -100,8 +100,13 @@ getJSON rId = do
     let req = setRequestHeaders [("Accept", "application/json"), ("user_key", apiKey)] $ req'
     response <- httpLBS req
     let respBody = getResponseBody response :: S.ByteString
-    let result = decode respBody :: Maybe DailyMenus 
-    return result
+    -- putStrLn $ pack ("response: " ++ (S.toString respBody))
+    let result = eitherDecode respBody :: Either String DailyMenus 
+    case result of
+           Left msg -> do  
+                          putStrLn $ pack msg
+                          return Nothing
+           Right jsn -> return $ Just jsn
 
 getData :: IO (MenuList)
 getData = do 
@@ -118,7 +123,7 @@ processJSON :: Restaurant -> IO (Menu)
 processJSON r = do
                     jsonData <- getJSON $ show $ getRestaurantId r
                     case jsonData of
-                           Nothing -> error "Failed to parse the menu JSON"
+                           Nothing -> return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, link = getRestaurantLink r, meals = [] } 
                            Just j -> return Menu{id = getRestaurantId r, restaurant = getRestaurantTitle r, link = getRestaurantLink r, meals = getMeals j }                     
 
 getMeals :: DailyMenus -> [Meal]
